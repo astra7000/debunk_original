@@ -1,0 +1,45 @@
+# sweep.yaml (최종 수정본)
+
+# 실행할 프로그램 이름
+program: /content/drive/Othercomputers/MacBook_Pro/debunkProject2/tool/main.py
+
+# 탐색 전략
+method: bayes
+
+# 최적화 목표
+metric:
+  name: val_balanced_acc
+  goal: maximize
+
+# 튜닝할 하이퍼파라미터 정의
+parameters:
+  lr:
+    distribution: log_uniform_values
+    min: 0.00001
+    max: 0.001
+  dropout_prob:
+    values: [0.2, 0.3, 0.4, 0.5]
+  weight_decay:
+    distribution: log_uniform_values
+    min: 0.00001
+    max: 0.001
+  gamma:
+    values: [0.5, 1.0, 2.0, 3.0]
+  beta:
+    values: [0.99, 0.999, 0.9999]
+
+# --------------------------------------------------------------------
+# ### 수정된 부분: 실행 명령어 템플릿 추가 ###
+# --------------------------------------------------------------------
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - --output_dir
+  - /content/drive/Othercomputers/MacBook_Pro/debunkProject2/result_space/checkpoint
+  - --data_dirs
+  - /content/drive/Othercomputers/MacBook_Pro/debunkProject2/dataset/pore/l_cheek_pore
+  - /content/drive/Othercomputers/MacBook_Pro/debunkProject2/dataset/pore/r_cheek_pore
+  - --train_loss
+  - cb                # 이 값은 항상 사용
+  - ${args}

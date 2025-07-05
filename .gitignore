@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+*.pkl
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data
+dataset/
+result_space/
+confusion_matrices/
+wandb_logs/
+
+# Checkpoints
+checkpoints_*/
+checkpoint_*/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# Wandb
+wandb/
+
+# Model files (large files)
+*.pth
+*.pt
+*.h5
+*.hdf5
+
+# Results
+*.csv
+*.json
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.avi
+
+# Keep only specific result files
+!README.md
+!requirements.txt
+!*.py
+!*.ipynb
+!*.yaml
+!*.yml 
+tool/debunk_main_sweeps.ipynb
+.gitignore
+tool/debunk_main.ipynb
