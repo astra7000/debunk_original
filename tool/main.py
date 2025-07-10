@@ -5,13 +5,14 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from torchvision import models
 import wandb
-from dataset_double import DoubleSkinDataset, AugmentedSkinDataset
+from dataset_double import DoubleSkinDataset #, AugmentedSkinDataset
 from model import Model
 import argparse
 from datetime import datetime
 import numpy as np
 import random
 from sklearn.model_selection import StratifiedShuffleSplit
+import glob
 
 
 def parse_args():
@@ -166,7 +167,7 @@ def main():
     if args.wandb_dir:
         wandb_dir = args.wandb_dir
     else:
-        wandb_dir = os.path.join(os.getcwd(), 'wandb_logs')
+        wandb_dir = os.path.join(os.getcwd(), 'wandb')
     
     os.environ['WANDB_DIR'] = wandb_dir
     os.makedirs(wandb_dir, exist_ok=True)
@@ -200,7 +201,8 @@ def main():
             name=args.wandb_name,
             config=wandb_config,
             id=args.wandb_id,
-            resume=args.wandb_resume
+            resume=args.wandb_resume,
+            dir=wandb_dir
         )
         use_wandb = True
         print("wandb 초기화 성공")
@@ -386,15 +388,26 @@ def main():
               f'Val Balanced Acc: {val_bal_acc:.4f} | '
               f'Val Macro F1: {val_macro_f1:.4f}')
         
-        # 최고 성능 모델 저장
-        if val_acc > best_acc:
-            best_acc = val_acc
+        # 최고 성능 모델 저장 (val_balanced_acc 기준)
+        if val_bal_acc > best_acc:
+            best_acc = val_bal_acc
             best_epoch = epoch  # 최고 성능 모델이 저장된 에폭 기록
             best_model_path = os.path.join(args.output_dir, f'best_model_epoch_{epoch}.pth')
-            print(f"🎯 새로운 최고 성능 달성! 에포크 {epoch}에서 {os.path.basename(best_model_path)} 저장 (검증 정확도: {val_acc:.4f})")
+            print(f"🎯 새로운 최고 성능 달성! 에포크 {epoch}에서 {os.path.basename(best_model_path)} 저장 (검증 Balanced Accuracy: {val_bal_acc:.4f})")
             model.save_checkpoint(optimizer, epoch, best_acc, best_model_path, scheduler)
-            if use_wandb:
-                wandb.save(best_model_path)
+
+            # 최근 3개만 남기고 이전 모델 삭제
+            model_files = sorted(
+                glob.glob(os.path.join(args.output_dir, "best_model_epoch_*.pth")),
+                key=lambda x: int(x.split("_")[-1].split(".")[0])
+            )
+            if len(model_files) > 3:
+                for old_file in model_files[:-3]:
+                    try:
+                        os.remove(old_file)
+                        print(f"🗑️ 이전 모델 삭제: {os.path.basename(old_file)}")
+                    except Exception as e:
+                        print(f"⚠️ 모델 삭제 실패: {old_file} ({e})")
             
         # 매 에포크 종료 시 스케줄러 업데이트
         scheduler.step()
