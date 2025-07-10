@@ -103,3 +103,4 @@ wandb/
 tool/debunk_main_sweeps.ipynb
 .gitignore
 tool/debunk_main.ipynb
+tool/sweeps.yaml
